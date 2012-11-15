@@ -55,18 +55,25 @@ class Nodes(models.Model):
     ID.primary_key=True;
     LABEL=models.CharField(max_length=30);
     SIZE=models.IntegerField();
+    LABEL1=models.IntegerField();
+    LABEL2=models.IntegerField();
+    LABEL3=models.IntegerField();
+    LABEL4=models.IntegerField();
+    LABEL5=models.IntegerField();
 #
 # friend graph edge class
 class Edges(models.Model):
     SOURCE=models.IntegerField();
     TARGET=models.IntegerField();
     WEIGHT=models.IntegerField();
+    LABEL=models.IntegerField();
+    TYPE=models.CharField(max_length=30);
     #node2=models.ForeignKey(Nodes);
     
 class r_nodes(models.Model):
     ID=models.IntegerField();
     ID.primary_key=True;
-    LABEL=models.CharField(max_length=30);
+    LABEL=models.IntegerField();
     SIZE=models.IntegerField();
     
 class r_edges(models.Model):
@@ -74,3 +81,115 @@ class r_edges(models.Model):
     TARGET=models.IntegerField();
     WEIGHT=models.IntegerField();
 
+class r1_nodes(models.Model):
+    ID=models.IntegerField();
+    ID.primary_key=True;
+    LABEL=models.IntegerField();
+    SIZE=models.IntegerField();
+    
+class r1_edges(models.Model):
+    SOURCE=models.IntegerField();
+    TARGET=models.IntegerField();
+    WEIGHT=models.IntegerField();
+
+class r2_nodes(models.Model):
+    ID=models.IntegerField();
+    ID.primary_key=True;
+    LABEL=models.IntegerField();
+    SIZE=models.IntegerField();
+    
+class r2_edges(models.Model):
+    SOURCE=models.IntegerField();
+    TARGET=models.IntegerField();
+    WEIGHT=models.IntegerField();
+
+class edgedata(models.Model):
+    SOURCE=models.IntegerField();
+    TARGET=models.IntegerField();
+    LABEL=models.IntegerField();
+    CLUSTERSOURCE=models.IntegerField();
+    CLUSTERTARGET=models.IntegerField();
+    WEIGHT=models.IntegerField();
+    day1=models.IntegerField();
+    day2=models.IntegerField();
+    day3=models.IntegerField();
+    day4=models.IntegerField();
+    day5=models.IntegerField();
+    day6=models.IntegerField();
+    day7=models.IntegerField();
+    day8=models.IntegerField();
+    day9=models.IntegerField();
+    day10=models.IntegerField();
+    day11=models.IntegerField();
+    day12=models.IntegerField();
+    day13=models.IntegerField();
+    day14=models.IntegerField();
+    day15=models.IntegerField();
+    week1=models.IntegerField();
+    week2=models.IntegerField();
+    week3=models.IntegerField();
+    week4=models.IntegerField();
+    month1=models.IntegerField();
+    month2=models.IntegerField();
+    month3=models.IntegerField();
+    
+class topicdata(models.Model):
+    TOPIC=models.CharField(max_length=30);
+    LOCATION=models.CharField(max_length=30);
+    day1=models.IntegerField();
+    day2=models.IntegerField();
+    day3=models.IntegerField();
+    day4=models.IntegerField();
+    day5=models.IntegerField();
+    day6=models.IntegerField();
+    day7=models.IntegerField();
+    day8=models.IntegerField();
+    day9=models.IntegerField();
+    day10=models.IntegerField();
+    day11=models.IntegerField();
+    day12=models.IntegerField();
+    day13=models.IntegerField();
+    day14=models.IntegerField();
+    day15=models.IntegerField();
+    week1=models.IntegerField();
+    week2=models.IntegerField();
+    week3=models.IntegerField();
+    week4=models.IntegerField();
+    month1=models.IntegerField();
+    month2=models.IntegerField();
+    month3=models.IntegerField();
+    
+class timedata(models.Model):
+    TIME=models.CharField(max_length=30);
+    LOCATION=models.CharField(max_length=30);
+    day1=models.IntegerField();
+    day2=models.IntegerField();
+    day3=models.IntegerField();
+    day4=models.IntegerField();
+    day5=models.IntegerField();
+    day6=models.IntegerField();
+    day7=models.IntegerField();
+    day8=models.IntegerField();
+    day9=models.IntegerField();
+    day10=models.IntegerField();
+    day11=models.IntegerField();
+    day12=models.IntegerField();
+    day13=models.IntegerField();
+    day14=models.IntegerField();
+    day15=models.IntegerField();
+    week1=models.IntegerField();
+    week2=models.IntegerField();
+    week3=models.IntegerField();
+    week4=models.IntegerField();
+    month1=models.IntegerField();
+    month2=models.IntegerField();
+    month3=models.IntegerField();
+    
+class locationlist(models.Model):
+    LOCATION=models.CharField(max_length=30);
+    
+class datacount(models.Model):
+    DATECOUNT=models.IntegerField();
+    
+class topiclist(models.Model):
+    TOPIC=models.CharField(max_length=30);

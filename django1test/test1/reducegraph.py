@@ -1,72 +1,43 @@
-from test1.models import Nodes,Edges,r_nodes,r_edges
-import copy
+from test1.models import Nodes,Edges,r1_nodes,r1_edges
+from django.core.files import File
 
-def findclique(list, size, target):
-    if i==1:
-        list[target]=1
-        return True
-    else:
-        list1=copy.copy(list)
-        list1[target]=1
-        t=False
-        nbrs=getneighbors(target)
-        for nbr in nbrs:
-            r=findclique(list,size,target)
-            if r==True:
-                print "HI"
-                
-def findcluster(list,size,target):
-    list2=copy.copy(list)
-    list2[target]=1;
-    nbrs=getneighbors(target)
-                    
-# returns list
-def getneighbors(target):
-    size=0;
-    count=Edges.objects.filter(SOURCE=target).count()+Edges.objects.filter(TARGET=target).count()
-    list1=[0]*count
-    edges=Edges.objects.filter(SOURCE=target)
+r1_nodes.objects.all().delete()
+r1_edges.objects.all().delete()
+
+
+# TODO label 
+with open('clustering.txt','r') as f:
+    myfile=File(f)
+    for line in myfile:
+        a=line.split('\t')
+        id1=a[0]
+        label1=a[1]
+        label2=a[2]
+        node=Nodes.objects.get(ID=id1)
+        node.LABEL1=label1
+        node.LABEL2=label2
+        try:
+            p = r1_nodes.objects.get(ID=label2)
+        except r1_nodes.DoesNotExist:
+            node2=r1_nodes(ID=label2,LABEL=label1,SIZE=1)
+            node2.save()
+        else:
+            p.SIZE=p.SIZE+1
+            p.save()
+        node.save()
+        
+    edges=Edges.objects.all();
     for edge in edges:
-        list1[size]= edge.TARGET
-        size=size+1
-    edges=Edges.objects.filter(TARGET=target)
-    
-    for edge in edges:
-        list1[size]= edge.SOURCE
-        size=size+1
-    return list1
-
-
-
-# returns boolean
-
-
-def isneighbor(source, target):
-    try:
-        edge=Edges.objects.get(SOURCE=source,TARGET=target)
-    except Edges.DoesNotExist:
-        try: 
-            edge=Edges.objects.get(SOURCE=target,TARGET=source)
-        except Edges.DoesNotExist:
-            return False
-        else: return True
-    else:
-        return True
-    
-def addclique(list1):
-    print "HI"
-    
-num=7
-node_count= Nodes.objects.all().count()
-marker=[0]*node_count
-nodes=Nodes.objects.all()
-
-for i in xrange(num,2,-1):
-    for node in nodes:
-        l=findclique(marker,i,node.ID)
-        if l:
-            addclique(marker)
-        marker=[0]*node_count
-#Edges.objects.filter(TARGET=target).count()
-
-print isneighbor(1,2)
+        src=Nodes.objects.get(ID=edge.SOURCE)
+        src=src.LABEL2
+        tar=Nodes.objects.get(ID=edge.TARGET)
+        tar=tar.LABEL2
+        if tar!=src:
+            try:
+                p = r1_edges.objects.get(SOURCE=src,TARGET=tar)
+            except r1_edges.DoesNotExist:
+                edge2=r1_edges(SOURCE=src,TARGET=tar,WEIGHT=1)
+                edge2.save()
+            else:
+                p.WEIGHT=p.WEIGHT+1
+                p.save()
