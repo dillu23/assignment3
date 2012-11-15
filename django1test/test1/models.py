@@ -185,6 +185,33 @@ class timedata(models.Model):
     month2=models.IntegerField();
     month3=models.IntegerField();
     
+class clustertopicdata(models.Model):
+    SOURCE=models.IntegerField();
+    TARGET=models.IntegerField();
+    TOPIC=models.CharField(max_length=30);
+    day1=models.IntegerField();
+    day2=models.IntegerField();
+    day3=models.IntegerField();
+    day4=models.IntegerField();
+    day5=models.IntegerField();
+    day6=models.IntegerField();
+    day7=models.IntegerField();
+    day8=models.IntegerField();
+    day9=models.IntegerField();
+    day10=models.IntegerField();
+    day11=models.IntegerField();
+    day12=models.IntegerField();
+    day13=models.IntegerField();
+    day14=models.IntegerField();
+    day15=models.IntegerField();
+    week1=models.IntegerField();
+    week2=models.IntegerField();
+    week3=models.IntegerField();
+    week4=models.IntegerField();
+    month1=models.IntegerField();
+    month2=models.IntegerField();
+    month3=models.IntegerField();
+
 class locationlist(models.Model):
     LOCATION=models.CharField(max_length=30);
     

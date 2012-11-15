@@ -1,4 +1,4 @@
-from test1.models import Nodes,edgedata,datacount,topicdata,timedata
+from test1.models import Nodes,edgedata,datacount,topicdata,timedata,topiclist,locationlist,clustertopicdata
 from django.core.files import File
 
 # move data
@@ -7,10 +7,10 @@ r=datacount.objects.all()
 for i in r:
     k=r.DATECOUNT
 
-for i in edgedata.objects.all():
-    i.month3=i.month2;i.month2=i.month1;i.month1=i.week1+i.week2+i.week3+i.week4;i.week4=i.week3;
-    i.week3=i.week2;i.week2=i.week1;i.week1=i.day1+i.day2+i.day3+i.day4+i.day5+i.day6+i.day7+i.day8+i.day9+i.day10+i.day11+i.day12+i.day13+i.day14+i.day15;
-    i.save();
+#for i in edgedata.objects.all():
+#    i.month3=i.month2;i.month2=i.month1;i.month1=i.week1+i.week2+i.week3+i.week4;i.week4=i.week3;
+#    i.week3=i.week2;i.week2=i.week1;i.week1=i.day1+i.day2+i.day3+i.day4+i.day5+i.day6+i.day7+i.day8+i.day9+i.day10+i.day11+i.day12+i.day13+i.day14+i.day15;
+#    i.save();
     
 for i in topicdata.objects.all():
     i.month3=i.month2;i.month2=i.month1;i.month1=i.week1+i.week2+i.week3+i.week4;i.week4=i.week3;
@@ -27,24 +27,31 @@ with open('log-comm.00.out', 'r') as f:
     myfile = File(f)
     for line in myfile:
         a=line.split(' ')
-        print str(r)+ " and "+ str(a[3])
+        #print str(r)+ " and "+ str(a[3])
+        
+        topic1=a[8]
+        try:
+            topic1row=topiclist.objects.get(TOPIC=topic1)
+        except topiclist.DoesNotExist:
+            topicrow2=topiclist(TOPIC=topic1)
+            topicrow2.save()
+        
         if int(r)!=int(a[3]):
             k=k+1
+            print k
             r=a[3]
         if k==0:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day1=p.day1+1;
-                    p.save();
+                dump=0
             else:
                 p.day1=p.day1+1;
                 p.save();
@@ -57,6 +64,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -74,21 +83,27 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day1=p.day1+1
                 p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=1,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day1=p.day1+1
         
         if k==1:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day2=p.day2+1;
-                    p.save();
+                dump=0
             else:
                 p.day2=p.day2+1;
                 p.save();
@@ -101,6 +116,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -118,20 +135,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day2=p.day2+1
                 p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=1,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day2=p.day2+1
         if k==2:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day3=p.day3+1;
-                    p.save();
+                dump=0
             else:
                 p.day3=p.day3+1;
                 p.save();
@@ -144,6 +167,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -161,20 +186,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day3=p.day3+1
                 p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=3,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day3=p.day3+1
         if k==3:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day4=p.day4+1;
-                    p.save();
+                dump=0
             else:
                 p.day4=p.day4+1;
                 p.save();
@@ -187,6 +218,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -204,21 +237,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day4=p.day4+1
                 p.save()
-        
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=1,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day4=p.day4+1
         if k==4:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day5=p.day5+1;
-                    p.save();
+                dump=0
             else:
                 p.day5=p.day5+1;
                 p.save();
@@ -231,6 +269,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -248,21 +288,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day5=p.day5+1
                 p.save()
-        
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=1,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day5=p.day5+1        
         if k==5:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day6=p.day6+1;
-                    p.save();
+                dump=0
             else:
                 p.day6=p.day6+1;
                 p.save();
@@ -275,6 +320,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -292,21 +339,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day6=p.day6+1
                 p.save()
-        
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=1,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day6=p.day6+1
         if k==6:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day7=p.day7+1;
-                    p.save();
+                dump=0
             else:
                 p.day7=p.day7+1;
                 p.save();
@@ -319,6 +371,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -335,22 +389,27 @@ with open('log-comm.00.out', 'r') as f:
                 p.save()
             else:
                 p.day7=p.day7+1
-                p.save()		
-        
+                p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=1,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day7=p.day7+1
         if k==7:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day8=p.day8+1;
-                    p.save();
+                dump=0
             else:
                 p.day8=p.day8+1;
                 p.save();
@@ -363,10 +422,12 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
-                p=topicdata(TOPIC=topic,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=1,day9=0,day40=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                p=topicdata(TOPIC=topic,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=1,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
                 p.save()
             else:
                 p.day8=p.day8+1
@@ -380,20 +441,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day8=p.day8+1
                 p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=1,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day8=p.day8+1
         if k==8:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day9=p.day9+1;
-                    p.save();
+                dump=0
             else:
                 p.day9=p.day9+1;
                 p.save();
@@ -406,6 +473,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -423,21 +492,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day9=p.day9+1
                 p.save()
-        
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=1,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day9=p.day9+1        
         if k==9:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day10=p.day10+1;
-                    p.save();
+                dump=0
             else:
                 p.day10=p.day10+1;
                 p.save();
@@ -450,6 +524,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -467,21 +543,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day10=p.day10+1
                 p.save()
-        
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=1,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day10=p.day10+1
         if k==10:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day11=p.day11+1;
-                    p.save();
+                dump=0
             else:
                 p.day11=p.day11+1;
                 p.save();
@@ -494,10 +575,12 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
-                p=topicdata(TOPIC=topic,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day40=0,day11=1,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                p=topicdata(TOPIC=topic,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=1,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
                 p.save()
             else:
                 p.day11=p.day11+1
@@ -511,21 +594,26 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day11=p.day11+1
                 p.save()
-        
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=1,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day11=p.day11+1
         if k==11:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day12=p.day12+1;
-                    p.save();
+                dump=0
             else:
                 p.day12=p.day12+1;
                 p.save();
@@ -538,6 +626,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -555,21 +645,27 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day12=p.day12+1
                 p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=1,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day12=p.day12+1
         
         if k==12:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day13=p.day13+1;
-                    p.save();
+                dump=0
             else:
                 p.day13=p.day13+1;
                 p.save();
@@ -582,10 +678,12 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
-                p=topicdata(TOPIC=topic,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day40=0,day11=0,day12=0,day13=1,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                p=topicdata(TOPIC=topic,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=1,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
                 p.save()
             else:
                 p.day13=p.day13+1
@@ -598,22 +696,28 @@ with open('log-comm.00.out', 'r') as f:
                 p.save()
             else:
                 p.day13=p.day13+1
-                p.save
+                p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=1,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day13=p.day13+1
         
         if k==13:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day14=p.day14+1;
-                    p.save();
+                dump=0
             else:
                 p.day14=p.day14+1;
                 p.save();
@@ -626,10 +730,12 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
-                p=topicdata(TOPIC=topic,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                p=topicdata(TOPIC=topic,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=1,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
                 p.save()
             else:
                 p.day14=p.day14+1
@@ -643,21 +749,27 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day14=p.day14+1
                 p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=1,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day14=p.day14+1
         
         if k==14:
             b=a[7].split('-')
             tar=int(b[1][:-1])
             src=int(b[0])
+            if src>tar:
+                t=tar
+                tar=src
+                src=t
             try:
                 p=edgedata.objects.get(SOURCE=src,TARGET=tar)
             except edgedata.DoesNotExist:
-                try:
-                    p=edgedata.objects.get(SOURCE=tar,TARGET=src)
-                except edgedata.DoesNotExist:
-                    print "doesn't exist"
-                else:
-                    p.day15=p.day15+1;
-                    p.save();
+                dump=0
             else:
                 p.day15=p.day15+1;
                 p.save();
@@ -670,6 +782,8 @@ with open('log-comm.00.out', 'r') as f:
                 location=sourcenode.LABEL                                        
             time=int(int(a[4].split(":")[0])/3)
             time=str(time)
+            
+                        
             try:
                 p=topicdata.objects.get(TOPIC=topic,LOCATION=location)
             except topicdata.DoesNotExist:
@@ -687,3 +801,14 @@ with open('log-comm.00.out', 'r') as f:
             else:
                 p.day15=p.day15+1
                 p.save()
+            
+            if location=="inter":
+                try:
+                    p=clustertopicdata.objects.get(SOURCE=src,TARGET=tar,TOPIC=topic)
+                except:
+                    p=clustertopicdata(SOURCE=src,TARGET=tar,TOPIC=topic,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=0,day14=0,day15=1,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                else:
+                    p.day15=p.day15+1
+    
+    date_count=datacount(DATECOUNT=k)
+    date_count.save();
