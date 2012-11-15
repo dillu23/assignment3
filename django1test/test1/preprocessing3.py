@@ -594,7 +594,7 @@ with open('log-comm.00.out', 'r') as f:
             try:
                 p=timedata.objects.get(TIME=time,LOCATION=location)
             except timedata.DoesNotExist:
-                p=timedata(TIME=time,LOCATION=location,day13=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=1,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
+                p=timedata(TIME=time,LOCATION=location,day1=0,day2=0,day3=0,day4=0,day5=0,day6=0,day7=0,day8=0,day9=0,day10=0,day11=0,day12=0,day13=1,day14=0,day15=0,week1=0,week2=0,week3=0,week4=0,month1=0,month2=0,month3=0)
                 p.save()
             else:
                 p.day13=p.day13+1

@@ -32,6 +32,10 @@ with open('clustering.txt','r') as f:
         src=src.LABEL2
         tar=Nodes.objects.get(ID=edge.TARGET)
         tar=tar.LABEL2
+        if src>tar:
+            r=tar
+            tar=src
+            src=tar
         if tar!=src:
             try:
                 p = r1_edges.objects.get(SOURCE=src,TARGET=tar)
