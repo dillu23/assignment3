@@ -4,7 +4,7 @@ from django.core.files import File
 Nodes.objects.all().delete()
 Edges.objects.all().delete()
 
-with open('log-graph.out','r') as f:
+with open('data/log-graph.out','r') as f:
     counter=0;
     myfile=File(f)
     for line in myfile:
@@ -12,7 +12,7 @@ with open('log-graph.out','r') as f:
         counter=counter+1;
         if a[1]=="node":
             id1=a[2][:-1]
-            node=Nodes(ID=id1,LABEL=a[3],SIZE=1,LABEL1=-1,LABEL2=-2,LABEL3=-3,LABEL4=-4,LABEL5=-5)
+            node=Nodes(ID=id1,LABEL=a[3],SIZE=1,LABEL1=-1,LABEL2=-2,LABEL3=-3,LABEL4=-4,LABEL5=-5,LABEL6=-6)
             node.save()
         elif a[1]=="edge":
             b=a[2].split('-')
@@ -25,8 +25,8 @@ with open('log-graph.out','r') as f:
                 src=b[1]
                 tar=b[0]
             try:
-                p=Edges.objects.get(SOURCE=src,TARGET=tar)
+                p=Edges.objects.get(SOURCE=src,TARGET=tar,LABEL1=-1)
             except:
-                edge=Edges(SOURCE=src,TARGET=tar,WEIGHT=1,LABEL=0,TYPE="friendsgraph")
+                edge=Edges(SOURCE=src,TARGET=tar,LABEL1=-1)
                 counter=counter+1
                 edge.save()
