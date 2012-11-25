@@ -25,7 +25,7 @@ def preprocess3(filename):
         counter=0
         for line in myfile:
             a=line.split(' ')
-            #print counter
+            print counter
             counter=counter+1
             topic1=a[8]
             if len(a)==10:
@@ -203,6 +203,8 @@ def preprocess3(filename):
     handle=open("data/data.json","r+")
     arr={}
     arr["day"]=r
-    arr["month"]=monthinv[t]
+    arr["month"]=monthinv[tmonth]
     handle.write(json.dumps(arr))
-    
+
+
+

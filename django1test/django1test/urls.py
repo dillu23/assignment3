@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-
+from test1.views import sampleview,spanview
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -14,4 +14,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
+    
+    url(r'^frienddemograph/$',sampleview),
+    url(r'^fieindspangraph/$',spanview),
+    #url(r'^frienddemograph/nodes/cluster=(\d{1,2})/$',jsonwritegraph2),
+    #url(r'^frienddemograph/edges/cluster=(\d{1,2})/$',jsonwritegraph3),
 )

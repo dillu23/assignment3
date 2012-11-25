@@ -186,3 +186,19 @@ class locationlist(models.Model):
     
 class topiclist(models.Model):
     TOPIC=models.CharField(max_length=30);
+    
+class clustertopicinter(models.Model):
+    day=models.IntegerField();
+    clusterID=models.IntegerField();
+    size=models.IntegerField();
+    inter=models.IntegerField();
+    intra=models.IntegerField();
+    total=models.IntegerField();
+
+class locationtopicinter(models.Model):
+    day=models.IntegerField();
+    locationname=models.CharField(max_length=30);
+    size=models.IntegerField();
+    inter=models.IntegerField();
+    intra=models.IntegerField();
+    total=models.IntegerField();
